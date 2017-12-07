@@ -7,6 +7,7 @@
 
   <head>
 	 <meta charset="utf-8">
+	<link rel="icon" type="image/png" sizes="96x96" href="<c:url value="/resources/img/logo.png" />">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 

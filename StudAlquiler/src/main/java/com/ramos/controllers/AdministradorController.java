@@ -2,6 +2,9 @@ package com.ramos.controllers;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -38,12 +41,16 @@ public class AdministradorController {
 	@Autowired
 	private UsuarioImpl usuarioImpl;
 	
+	private static final DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+	
 	public File convert(MultipartFile multipart) throws IllegalStateException, IOException 
 	{
-	    File convFile = new File( multipart.getOriginalFilename());
-	    multipart.transferTo(convFile);
-	    return convFile;
+			Date date = new Date();
+			File convFile = new File(System.getProperty("java.io.tmpdir")+"/"+sdf.format(date)+multipart.getOriginalFilename());
+		    multipart.transferTo(convFile);
+		    return convFile;
 	}
+	
 	@GetMapping("admin/home")
 	public String admin_home(Model model,HttpSession httpSession) {
 		
@@ -115,10 +122,16 @@ public class AdministradorController {
 	}
 	
 	@GetMapping("admin/inmueble/{id}/borrar")
-	public String borrar_inmueble(@PathVariable("id") String id) {
-		String respuesta_borrado=inmuebleImpl.destroyInmueble(id);
-		System.out.println(respuesta_borrado);
-		return  "redirect:/admin/list_inmuebles";
+	public String borrar_inmueble(@PathVariable("id") String id,HttpSession httpSession) {
+		Usuario usuario= (Usuario) httpSession.getAttribute("usuario");
+		if(usuario!=null) {
+			String respuesta_borrado=inmuebleImpl.destroyInmueble(id);
+			return  "redirect:/admin/list_inmuebles";
+		}else {
+			//si no esta logueado redirige a sesion
+			return "redirect:/sesion";
+		}
+		
 	}
 
 	// Centros Educativos
@@ -127,14 +140,14 @@ public class AdministradorController {
 		
 		Usuario usuario= (Usuario) httpSession.getAttribute("usuario");
 		
-		if(usuario!=null) {
+		//if(usuario!=null) {
 			List<CentroEducativo> centros_educativos =centroEducativoImpl.findAllCentros();
 			model.addAttribute("centro_educativos", centros_educativos);
 			return "admin/list_centros";
-		}else {
+		/*}else {
 			//si no esta logueado redirige a sesion
 			return "redirect:/sesion";
-		}
+		}*/
 	}
 	
 	@GetMapping("admin/crear_centro")
@@ -164,7 +177,7 @@ public class AdministradorController {
 		
 		if(usuario!=null) {
 			String respuesta_creacion=centroEducativoImpl.crearCentro(centroEducativo.getTipo(), centroEducativo.getNombre(), centroEducativo.getDireccion(), logo, imagen);
-			System.out.println(respuesta_creacion);
+		
 			return "redirect:/admin/list_centros";
 		}else {
 			//si no esta logueado redirige a sesion
@@ -187,24 +200,37 @@ public class AdministradorController {
 	
 	@PostMapping("admin/editar_centro/{id}/actualizar")
 	public String actualizar_centro(@PathVariable String id,HttpSession httpSession,Model model,@ModelAttribute("centroeducativo") CentroEducativo centro) {
-		Client client = Client.create();
-		WebResource webResource = client.resource("https://proyecto-alquiler-api-kevinghanz.c9users.io/api/v1/centros_educativos/"+id);
-		
-		String envio = "{\"tipo\": \""+centro.getTipo() +"\", \"nombre\":\""+centro.getNombre()+"\",\"direccion\":\""+
-				centro.getDireccion()+"\"}";
-		ClientResponse response = webResource.accept("application/json").type("application/json").put(ClientResponse.class, envio);
-		if (response.getStatus() != 200) {
-			throw new RuntimeException("Failed : HTTP error code : "
-				+ response.getStatus());
+		Usuario usuario= (Usuario) httpSession.getAttribute("usuario");
+		if(usuario!=null) {
+			Client client = Client.create();
+			WebResource webResource = client.resource("https://proyecto-alquiler-api-kevinghanz.c9users.io/api/v1/centros_educativos/"+id);
+			
+			String envio = "{\"tipo\": \""+centro.getTipo() +"\", \"nombre\":\""+centro.getNombre()+"\",\"direccion\":\""+
+					centro.getDireccion()+"\"}";
+			ClientResponse response = webResource.accept("application/json").type("application/json").put(ClientResponse.class, envio);
+			if (response.getStatus() != 200) {
+				throw new RuntimeException("Failed : HTTP error code : "
+					+ response.getStatus());
+			}
+			return "redirect:/admin/list_centros";
+		}else {
+			//si no esta logueado redirige a sesion
+			return "redirect:/sesion";
 		}
-		return "redirect:/admin/list_centros";
+		
 	}
 	
 	@GetMapping("admin/centro/{id}/borrar")
-	public String borrar_centro(@PathVariable("id") String id) {
-		String respuesta_borrado=centroEducativoImpl.destroyCentro(id);
-		System.out.println(respuesta_borrado);
-		return  "redirect:/admin/list_centros";
+	public String borrar_centro(@PathVariable("id") String id,HttpSession httpSession) {
+		Usuario usuario= (Usuario) httpSession.getAttribute("usuario");
+		if(usuario!=null) {
+			String respuesta_borrado=centroEducativoImpl.destroyCentro(id);
+			return  "redirect:/admin/list_centros";
+		}else {
+			//si no esta logueado redirige a sesion
+			return "redirect:/sesion";
+		}
+		
 	}
 	// Usuarios
 	@GetMapping("admin/list_users")
@@ -237,46 +263,80 @@ public class AdministradorController {
 	
 	@PostMapping("admin/editar_user/{id}/actualizar")
 	public String actualizar_user(@PathVariable String id,HttpSession httpSession,Model model,@ModelAttribute("usuario") Usuario usuario) {
-		Client client = Client.create();
-		WebResource webResource = client.resource("https://proyecto-alquiler-api-kevinghanz.c9users.io/api/v1/usuarios/"+id);
-		
-		String envio = "{\"username\": \""+usuario.getUsername() +"\", \"nombres\":\""+usuario.getNombres()+"\",\"apellidos\":\""+
-				usuario.getApellidos()+"\",\"correo\":\""+usuario.getCorreo()+"\",\"telefono\":\""+usuario.getTelefono()+"\"}";
-		ClientResponse response = webResource.accept("application/json").type("application/json").put(ClientResponse.class, envio);
-		if (response.getStatus() != 200) {
-			throw new RuntimeException("Failed : HTTP error code : "
-				+ response.getStatus());
+		Usuario usuario2= (Usuario) httpSession.getAttribute("usuario");
+		if(usuario2!=null) {
+			Client client = Client.create();
+			WebResource webResource = client.resource("https://proyecto-alquiler-api-kevinghanz.c9users.io/api/v1/usuarios/"+id);
+			
+			String envio = "{\"username\": \""+usuario.getUsername() +"\", \"nombres\":\""+usuario.getNombres()+"\",\"apellidos\":\""+
+					usuario.getApellidos()+"\",\"correo\":\""+usuario.getCorreo()+"\",\"telefono\":\""+usuario.getTelefono()+"\"}";
+			ClientResponse response = webResource.accept("application/json").type("application/json").put(ClientResponse.class, envio);
+			if (response.getStatus() != 200) {
+				throw new RuntimeException("Failed : HTTP error code : "
+					+ response.getStatus());
+			}
+			return "redirect:/admin/list_users";
+		}else {
+			//si no esta logueado redirige a sesion
+			return "redirect:/sesion";
 		}
-		return "redirect:/admin/list_users";
+		
+	}
+	@GetMapping("admin/usuario/{id}/eliminar")
+	public String eliminarUser(@PathVariable("id") String id,HttpSession httpSession) {
+		Usuario usuario2= (Usuario) httpSession.getAttribute("usuario");
+		if(usuario2!=null) {
+			String respuesta_borrado=usuarioImpl.destroyUsuario(id);
+			
+			return  "redirect:/admin/list_users";
+		}else {
+			//si no esta logueado redirige a sesion
+			return "redirect:/sesion";
+		}
+		
 	}
 	
 	@GetMapping("admin/usuario/{id}/deshabilitar")
-	public String deshabilitarUser(@PathVariable("id") String id) {
-		Client client = Client.create();
-		WebResource webResource = client.resource("https://proyecto-alquiler-api-kevinghanz.c9users.io/api/v1/habilitar/"+id);
-		
-		String envio = "{\"estado\": \""+"Deshabilitado" +"\"}";
-		ClientResponse response = webResource.accept("application/json").type("application/json").put(ClientResponse.class, envio);
-		if (response.getStatus() != 200) {
-			throw new RuntimeException("Failed : HTTP error code : "
-				+ response.getStatus());
+	public String deshabilitarUser(@PathVariable("id") String id,HttpSession httpSession) {
+		Usuario usuario2= (Usuario) httpSession.getAttribute("usuario");
+		if(usuario2!=null) {
+			Client client = Client.create();
+			WebResource webResource = client.resource("https://proyecto-alquiler-api-kevinghanz.c9users.io/api/v1/habilitar/"+id);
+			
+			String envio = "{\"estado\": \""+"Deshabilitado" +"\"}";
+			ClientResponse response = webResource.accept("application/json").type("application/json").put(ClientResponse.class, envio);
+			if (response.getStatus() != 200) {
+				throw new RuntimeException("Failed : HTTP error code : "
+					+ response.getStatus());
+			}
+			
+			return  "redirect:/admin/list_users";
+		}else {
+			//si no esta logueado redirige a sesion
+			return "redirect:/sesion";
 		}
 		
-		return  "redirect:/admin/list_users";
 	}
 	
 	@GetMapping("admin/usuario/{id}/habilitar")
-	public String habilitarUser(@PathVariable("id") String id) {
-		Client client = Client.create();
-		WebResource webResource = client.resource("https://proyecto-alquiler-api-kevinghanz.c9users.io/api/v1/habilitar/"+id);
-		
-		String envio = "{\"estado\": \""+"Habilitado" +"\"}";
-		ClientResponse response = webResource.accept("application/json").type("application/json").put(ClientResponse.class, envio);
-		if (response.getStatus() != 200) {
-			throw new RuntimeException("Failed : HTTP error code : "
-				+ response.getStatus());
+	public String habilitarUser(@PathVariable("id") String id,HttpSession httpSession) {
+		Usuario usuario2= (Usuario) httpSession.getAttribute("usuario");
+		if(usuario2!=null) {
+			Client client = Client.create();
+			WebResource webResource = client.resource("https://proyecto-alquiler-api-kevinghanz.c9users.io/api/v1/habilitar/"+id);
+			
+			String envio = "{\"estado\": \""+"Habilitado" +"\"}";
+			ClientResponse response = webResource.accept("application/json").type("application/json").put(ClientResponse.class, envio);
+			if (response.getStatus() != 200) {
+				throw new RuntimeException("Failed : HTTP error code : "
+					+ response.getStatus());
+			}
+			
+			return  "redirect:/admin/list_users";
+		}else {
+			//si no esta logueado redirige a sesion
+			return "redirect:/sesion";
 		}
 		
-		return  "redirect:/admin/list_users";
 	}
 }

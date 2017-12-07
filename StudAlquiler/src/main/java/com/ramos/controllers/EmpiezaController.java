@@ -34,19 +34,27 @@ public class EmpiezaController {
 	
 	@GetMapping("/empieza")
 	public String empieza(Model model) {
+		try {
+			List<CentroEducativo> centros_educativos=centroEducativoImpl.findAllCentros();
+			model.addAttribute("lista", centros_educativos);
+			return "empieza";
+		}catch (Exception e) {
+			return "error/503";
+		}
 		
-		List<CentroEducativo> centros_educativos=centroEducativoImpl.findAllCentros();
-		model.addAttribute("lista", centros_educativos);
-		return "empieza";
 		
 	}
 	
 	@GetMapping("/vistas/vista/{id}")
 	public String vista(@PathVariable int id,Model model) {
+		try {
 		String id_con=String.valueOf(id);
 		List<Inmueble> inmuebles=inmuebleImpl.findInmueblesbyCentro(id_con);		
 		model.addAttribute("lista2", inmuebles);
 		return "vistas/vista";
+		}catch (Exception e) {
+			return "error/503";
+		}
 	}
 	
 	@RequestMapping(value="/vistas/vista/{id}", method=RequestMethod.GET, params="distrito")

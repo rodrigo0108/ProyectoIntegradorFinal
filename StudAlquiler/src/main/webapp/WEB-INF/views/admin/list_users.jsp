@@ -5,8 +5,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
-	<link rel="apple-touch-icon" sizes="76x76" href="assets/img/apple-icon.png">
-	<link rel="icon" type="image/png" sizes="96x96" href="assets/img/favicon.png">
+	<link rel="icon" type="image/png" sizes="96x96" href="<c:url value="/resources/img/logo.png" />">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
 	<title>StudAlquiler</title>
@@ -47,6 +46,15 @@
 		    var doIt=confirm('¿Estas seguro que deseas habilitar este usuario?');
 		  if(doIt){
 			location.href ="usuario/"+id+"/habilitar";
+		    }
+		  else{
+		
+		    }
+		}
+		function eliminarUser(id){
+		    var doIt=confirm('¿Estas seguro que deseas eliminar este usuario?, lo elimarás con todos sus inmuebles.');
+		  if(doIt){
+			location.href ="usuario/"+id+"/eliminar";
 		    }
 		  else{
 		
@@ -168,10 +176,6 @@
 											<td>${dep.tipo}</td>
 											<td>${dep.telefono}</td>
 											<td>${dep.estado}</td>
-											<td><a	href="editar_user/${dep.id}"
-															class="btn btn-info btn-xs"> <i
-															class="ti-pencil"></i>Editar
-												</a></td>
 											<td>
 												<button class="btn btn-outline-danger btn-xs" type="reset" name="deshabilitar" onclick="deshabilitarUser(${dep.id});" >
     											<i class="ti-lock"></i> Deshabilitar
@@ -181,6 +185,16 @@
 												<button class="btn btn-success btn-xs" type="reset" name="habilitar" onclick="habilitarUser(${dep.id});" >
     											<i class="ti-unlock"></i> Habilitar
 												</button>									
+											</td>
+											<td><a	href="editar_user/${dep.id}"
+															class="btn btn-info btn-xs"> <i
+															class="ti-pencil"></i>Editar
+												</a>
+											</td>
+											<td>
+												<button class="btn btn-danger btn-xs" type="reset" name="eliminar" onclick="eliminarUser(${dep.id});" >
+    											<i class="ti-trash"></i>Eliminar
+												</button>
 											</td>
 											</tr>
 											</c:forEach>

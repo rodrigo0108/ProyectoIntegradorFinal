@@ -2,6 +2,9 @@ package com.ramos.controllers;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -28,11 +31,14 @@ public class IndexController {
 	private UsuarioImpl usuarioImpl;
 	
 	private static final Logger logger = LoggerFactory.getLogger(IndexController.class);
+	private static final DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 	
 	public File convert(MultipartFile multipart) throws IllegalStateException, IOException 
 	{
-	    File convFile = new File( multipart.getOriginalFilename());
+		Date date = new Date();
+		File convFile = new File(System.getProperty("java.io.tmpdir")+"/"+sdf.format(date)+multipart.getOriginalFilename());
 	    multipart.transferTo(convFile);
+	    
 	    return convFile;
 	}
 	

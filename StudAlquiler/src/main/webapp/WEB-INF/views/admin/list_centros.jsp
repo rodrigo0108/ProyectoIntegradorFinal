@@ -1,3 +1,4 @@
+<%@page import="com.ramos.utils.Utils"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -5,8 +6,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
-	<link rel="apple-touch-icon" sizes="76x76" href="assets/img/apple-icon.png">
-	<link rel="icon" type="image/png" sizes="96x96" href="assets/img/favicon.png">
+	<link rel="icon" type="image/png" sizes="96x96" href="<c:url value="/resources/img/logo.png" />">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
 	<title>StudAlquiler</title>
@@ -153,12 +153,11 @@
 											<td>${dep.tipo}</td>
 											<td>${dep.nombre}</td>
 											<td>${dep.direccion}</td>
-											<td>${dep.logo}</td>
-											<td>${dep.imagen}</td>
+											<td><img height="100px" width="200px"src="<%=Utils.URL_BASE%>/images/centroseducativos/${dep.logo}" alt="Card image cap"></td>
+											<td><img height="100px" width="150px"src="<%=Utils.URL_BASE%>/images/centroseducativos/${dep.imagen}" alt="Card image cap"></td>
 											<td><a	href="editar_centro/${dep.id}"
 															class="btn btn-info btn-xs"> <i
-															class="ti-pencil"></i>Editar
-												</a></td>
+															class="ti-pencil"></i>Editar</a></td>
 											<td>
 												<button class="btn btn-outline-danger btn-xs" type="reset" name="delete" onclick="eliminarCentro(${dep.id});" >
     											<i class="ti-trash"></i> Eliminar

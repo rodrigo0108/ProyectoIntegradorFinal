@@ -8,6 +8,7 @@
   <head>
 
     <meta charset="utf-8">
+    <link rel="icon" type="image/png" sizes="96x96" href="<c:url value="/resources/img/logo.png" />">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -91,14 +92,14 @@ google.maps.event.addDomListener(window, 'load', initialize2);
       <div class="row">
 		      
        <div class="col-lg-8 col-md-5">
-			<div class="card mb-3" style="height: 500px;">
+			<div class="card mb-3">
 					<div class="card-block">
 					
 							<span class="caption" style="font-size: 150%;">&nbsp;&nbsp;Departamento en estreno</span>
 							<span class="caption text-muted">&nbsp;&nbsp; <i class="fa fa-map-marker"></i>&nbsp;${inmueble.direccion}</span>
 						
 							
-							<img src="<%=Utils.URL_BASE%>/images/inmuebles/${inmueble.imagen}" style="width: 100%; height: 500px;"></img>
+							<img src="<%=Utils.URL_BASE%>/images/inmuebles/${inmueble.imagen}" style="width: 100%; height: 150%;"></img>
 					
 					</div>  
             </div>

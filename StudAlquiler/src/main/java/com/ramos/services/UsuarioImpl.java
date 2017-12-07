@@ -8,6 +8,7 @@ import javax.ws.rs.core.MediaType;
 import org.springframework.stereotype.Service;
 
 import com.ramos.interfaces.UsuarioInterface;
+import com.ramos.models.UserLog;
 import com.ramos.models.Usuario;
 import com.ramos.utils.Utils;
 import com.sun.jersey.api.client.Client;
@@ -25,6 +26,15 @@ import com.sun.jersey.multipart.file.FileDataBodyPart;
 @Service
 public class UsuarioImpl implements UsuarioInterface{
 	
+	@Override
+	public ClientResponse login(UserLog userlog) {
+		ClientConfig clientConfig = new DefaultClientConfig();
+		clientConfig.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING,Boolean.TRUE);
+		Client client = Client.create(clientConfig);
+		WebResource webResource = client.resource(Utils.URL_BASE+"/api/v1/login");
+		ClientResponse response = webResource.type("application/json").post(ClientResponse.class,userlog);
+		return response;
+	}
 	@Override
 	public List<Usuario> allUsuarios() {
 		ClientConfig clientConfig = new DefaultClientConfig();
@@ -80,6 +90,16 @@ public class UsuarioImpl implements UsuarioInterface{
 		}
 		
 	}
+	@Override
+	public String destroyUsuario(String id) {
+		Client client = Client.create();
+		WebResource webResource = client.resource("https://proyecto-alquiler-api-kevinghanz.c9users.io/api/v1/usuarios/"+id);
+		ClientResponse response = webResource.delete(ClientResponse.class);
+		String respuesta = response.getEntity(String.class);
+		return respuesta;
+	}
+
+	
 
 
 

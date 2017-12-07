@@ -8,6 +8,7 @@
   <head>
 
     <meta charset="utf-8">
+    <link rel="icon" type="image/png" sizes="96x96" href="<c:url value="/resources/img/logo.png" />">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -85,12 +86,14 @@
        	<div class="container">
 					<form method="get">
 						<div class="list-inline text-center">
+						<label>Formato de búsqueda: "Anita" o "Miraflores" </label>
 							<input name="distrito" type="text" placeholder="Búsqueda por ubicación...">
 							<input type="submit" class="btn btn-secondary" value="Buscar">
 						</div>
 					</form>
 		 </div>
 		</div>
+		<br>
 		<br>
 		<br>
 		<br>

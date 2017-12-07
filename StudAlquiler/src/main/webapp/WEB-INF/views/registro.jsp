@@ -7,6 +7,7 @@
   <head>
 
     <meta charset="utf-8">
+    <link rel="icon" type="image/png" sizes="96x96" href="<c:url value="/resources/img/logo.png" />">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -132,7 +133,7 @@
 										<div class="col-md-12">
 											<div class="floating-label-form-group controls">
     											<label>Imagen</label>
-      											<input  class="form-control border-input" type="file" name="archivo" style="font-size: 90%;"required>
+      											<input id="file" class="form-control border-input" type="file" name="archivo" style="font-size: 90%;" max-size=50000 required>
     											</div>
     									 </div>
   								</div>
@@ -194,11 +195,13 @@
     
 	<script>
     $(document).ready(function(){
+    
         var $submitBtn = $("#form button[type='submit']");
         var $passwordBox = $("#password");
         var $confirmBox = $("#confirm_password");
-        var $errorMsg =  $('</br><span style="color: red;" id="error_msg">Las contraseñas no coinciden</span>');
-
+        var $errorMsg =  $('</br><span style="color: red;" id="error_msg">Las contraseñas no coinciden</span>');  
+        
+        
         $submitBtn.removeAttr("disabled");
 
         function checkMatchingPasswords(){
@@ -209,7 +212,7 @@
                 }
             }
         }
-
+   
         function resetPasswordError(){
             $submitBtn.removeAttr("disabled");
             var $errorCont = $("#error_msg");
@@ -219,21 +222,27 @@
         }
 
 
-        $("#confirm_password, #password")
+        $("#confirm_password, #password, #file")
              .on("keydown", function(e){
                 if(e.keyCode == 13 || e.keyCode == 9) {
                     checkMatchingPasswords();
+  
                 }
+                
              })
              .on("blur", function(){                    
                 checkMatchingPasswords();
+                
             })
             .on("focus", function(){
                 resetPasswordError();
             })
+            
 
     });
   </script>
+  
+ 
   </body>
 
 </html>
